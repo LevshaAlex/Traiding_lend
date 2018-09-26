@@ -1,0 +1,46 @@
+document.addEventListener('DOMContentLoaded', function() {
+    function getLink(ref) {
+        var land = getLand();
+        var httpReferrer = encodeURIComponent(document.referrer);
+        var qs = window.location.search === '' ? '?http_referer=' + httpReferrer : window.location.search + '&http_referer=' + httpReferrer;
+        return 'https://olymptrade.com/l/' + land + '/' + ref + qs;
+    }
+
+    function getRef() {
+        var refMatch = window.location.search.match(/(?:\?|&)ref=(.*?)(?:&|$)/);
+        var lRefMatch = window.location.search.match(/(?:\?|&)lref=(.*?)(?:&|$)/);
+        var ref = refMatch && refMatch[1] ? refMatch[1] : null;
+        var lRef = lRefMatch && lRefMatch[1] ? lRefMatch[1] : null;
+        return ref === null ? (lRef === null ? 'olymp' : lRef) : ref;
+    }
+
+    function getLand() {
+        var landMatch = window.location.pathname.match(/lands\/(.*?)(?:\/|\?|$)/);
+        return landMatch ? landMatch[1] : 'land-not-found';
+    }
+
+    function appendImage(src) {
+        var image = document.createElement('img');
+        image.style.width = 0;
+        image.style.height = 0;
+        image.style.position = 'absolute';
+        image.style.left = '-99999px';
+        image.style.top = '0';
+        image.src = src;
+        document.body.appendChild(image);
+    }
+
+    var ref = getRef();
+    var refParts = ref.split('_');
+    if (refParts[0] === 'p' || refParts[0] === 'tr') {
+        return;
+    }
+
+    var queryPixel = window.location.search.indexOf('pixel=0') >= 0;
+    if(queryPixel) {
+        return;
+    }
+
+    var link = getLink(ref);
+    appendImage(link);
+});
